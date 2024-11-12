@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RecycLog</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
+    <script src="https://unpkg.com/html5-qrcode"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <button class="menu-toggle" onclick="toggleSidebar()"><i class="fas fa-bars"></i></button>
+    
+    <div class="sidebar">
+        <h1><i class="fas fa-recycle"></i> RecycLog</h1>
+        <div class="nav-item active" onclick="showSection('dashboard')">
+            <i class="fas fa-home"></i> Dashboard
+        </div>
+        <div class="nav-item" onclick="showSection('statistics')">
+            <i class="fas fa-chart-bar"></i> Statistics
+        </div>
+        <div class="nav-item" onclick="showSection('challenges')">
+            <i class="fas fa-trophy"></i> Challenges
+        </div>
+        <div class="nav-item" onclick="showSection('community')">
+            <i class="fas fa-users"></i> Community
+        </div>
+        <div class="nav-item" onclick="showSection('rewards')">
+            <i class="fas fa-gift"></i> Rewards
+        </div>
+        <div class="nav-item" onclick="showSection('settings')">
+            <i class="fas fa-cog"></i> Settings
+        </div>
+    </div>
+
+    <div class="main-content">
+        <section id="dashboard" class="section active">
+            <div class="quick-actions">
+                <button class="action-btn" onclick="showLogModal()">
+                    <i class="fas fa-plus"></i> Log Recycling
+                </button>
+                <button class="action-btn" onclick="startQRScanner()">
+                    <i class="fas fa-qrcode"></i> QR Scanner
+                </button>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <h3><i class="fas fa-box"></i> Total Items Recycled</h3>
+                    <p id="total-items">0</p>
+                </div>
+                <div class="stat-card">
+                    <h3><i class="fas fa-leaf"></i> CO2 Saved</h3>
+                    <p id="co2-saved">0 kg</p>
+                </div>
+                <div class="stat-card">
+                    <h3><i class="fas fa-star"></i> Points Earned</h3>
+                    <p id="points">0</p>
+                </div>
+            </div>
+
+            <div class="date-range-picker">
+                <label for="start-date">Start Date:</label>
+                <input type="date" id="start-date">
+                <label for="end-date">End Date:</label>
+                <input type="date" id="end-date">
+                <button onclick="updateChartDateRange()">
+                    <i class="fas fa-sync"></i> Update Chart
+                </button>
+            </div>
+
+            <div class="chart-container">
+                <canvas id="recycling-chart"></canvas>
+            </div>
+
+            <div class="activity-feed" id="activity-feed">
+                <h3><i class="fas fa-history"></i> Recent Activity</h3>
+            </div>
+        </section>
+
+        <section id="statistics" class="section">
+            <h2><i class="fas fa-chart-pie"></i> Detailed Statistics</h2>
+            <div class="chart-container">
+                <canvas id="materials-chart"></canvas>
+            </div>
+        </section>
+
+        <section id="challenges" class="section">
+            <h2><i class="fas fa-trophy"></i> Active Challenges</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <h3>Weekly Challenge</h3>
+                    <p>Recycle 50 items</p>
+                    <div class="progress-bar">
+                        <div class="progress" style="width: 60%"></div>
+                    </div>
+                    <p>30/50 items</p>
+                </div>
+                <div class="stat-card">
+                    <h3>Monthly Challenge</h3>
+                    <p>Save 100kg CO2</p>
+                    <div class="progress-bar">
+                        <div class="progress" style="width: 45%"></div>
+                    </div>
+                    <p>45/100 kg</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="community" class="section">
+            <h2><i class="fas fa-users"></i> Leaderboard</h2>
+            <div class="leaderboard">
+                <div class="leaderboard-header">
+                    <span>Rank</span>
+                    <span>User</span>
+                    <span>Points</span>
+                </div>
+                <div id="leaderboard-list"></div>
+            </div>
+        </section>
+
+        <section id="rewards" class="section">
+            <h2><i class="fas fa-gift"></i> Your Rewards</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <h3>10% Off Eco Store</h3>
+                    <p>Cost: 1000 points</p>
+                    <button class="action-btn">Claim</button>
+                </div>
+                <div class="stat-card">
+                    <h3>Plant a Tree</h3>
+                    <p>Cost: 2000 points</p>
+                    <button class="action-btn">Claim</button>
+                </div>
+            </div>
+        </section>
+
+        <section id="settings" class="section">
+            <h2><i class="fas fa-cog"></i> Settings</h2>
+            <div class="settings-container">
+                <div class="setting-item">
+                    <label><i class="fas fa-palette"></i> Theme</label>
+                    <div class="theme-toggle">
+                        <button onclick="toggleTheme()" id="theme-btn">Switch to Dark Theme</button>
+                    </div>
+                </div>
+                <div class="setting-item">
+                    <label><i class="fas fa-bell"></i> Notifications</label>
+                    <input type="checkbox" id="notifications" checked>
+                </div>
+                <div class="setting-item">
+                    <button onclick="logout()" class="logout-btn">
+                        <i class="fas fa-sign-out-alt"></i> Log Out
+                    </button>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <div id="log-modal" class="modal">
+        <div class="modal-content">
+            <h2><i class="fas fa-plus"></i> Log Recycling</h2>
+            <select id="item-type">
+                <option value="plastic">Plastic</option>
+                <option value="glass">Glass</option>
+                <option value="paper">Paper</option>
+                <option value="metal">Metal</option>
+            </select>
+            <input type="number" id="item-quantity" placeholder="Quantity">
+            <button onclick="logRecycling()">
+                <i class="fas fa-check"></i> Submit
+            </button>
+            <button onclick="closeModal()">
+                <i class="fas fa-times"></i> Close
+            </button>
+        </div>
+    </div>
+
+    <div id="qr-modal" class="modal">
+        <div class="modal-content">
+            <button class="close-scanner" onclick="closeQRScanner()">
+                <i class="fas fa-times"></i>
+            </button>
+            <div id="qr-reader"></div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

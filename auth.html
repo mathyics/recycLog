@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RecycLog - Authentication</title>
+    <style>
+        :root {
+            --bg-primary: #f8f9fa;
+            --bg-secondary: #ffffff;
+            --text-primary: #2d3436;
+            --text-secondary: #636e72;
+            --accent-color: #00b894;
+            --accent-hover: #00a884;
+            --card-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+        }
+
+        .container {
+            display: flex;
+            width: 100%;
+            min-height: 100vh;
+        }
+
+        .auth-form {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .form-container {
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .image-container {
+            display: none;
+            flex: 1;
+            background-color: var(--bg-secondary);
+        }
+
+        h1 {
+            font-size: 2rem;
+            color: var(--accent-color);
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+
+        h2 {
+            font-size: 1.5rem;
+            color: var(--text-primary);
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--text-secondary);
+        }
+
+        input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--text-secondary);
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+
+        button {
+            width: 100%;
+            padding: 0.75rem;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .toggle-form {
+            text-align: center;
+            margin-top: 1rem;
+        }
+
+        .toggle-form a {
+            color: var(--accent-color);
+            text-decoration: none;
+        }
+
+        .toggle-form a:hover {
+            text-decoration: underline;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        @media (min-width: 768px) {
+            .image-container {
+                display: block;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="auth-form">
+            <div class="form-container">
+                <h1>RecycLog</h1>
+                <h2 id="formTitle">Sign in to your account</h2>
+                <form id="authForm">
+                    <div id="usernameGroup" class="form-group hidden">
+                        <label for="username">Username</label>
+                        <input type="text" id="username" name="username" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email address</label>
+                        <input type="email" id="email" name="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <input type="password" id="password" name="password" required>
+                    </div>
+                    <div id="confirmPasswordGroup" class="form-group hidden">
+                        <label for="confirmPassword">Confirm Password</label>
+                        <input type="password" id="confirmPassword" name="confirmPassword">
+                    </div>
+                    <button type="submit">Sign in</button>
+                </form>
+                <div class="toggle-form">
+                    <p>Don't have an account? <a href="#" id="toggleForm">Sign up</a></p>
+                </div>
+            </div>
+        </div>
+        <div class="image-container">
+            <img src="https://via.placeholder.com/1920x1080?text=Recycling+Illustration" alt="Recycling illustration" style="width: 100%; height: 100%; object-fit: cover;">
+        </div>
+    </div>
+
+    <script>
+        const form = document.getElementById('authForm');
+        const formTitle = document.getElementById('formTitle');
+        const toggleFormLink = document.getElementById('toggleForm');
+        const usernameGroup = document.getElementById('usernameGroup');
+        const confirmPasswordGroup = document.getElementById('confirmPasswordGroup');
+        let isLogin = true;
+
+        toggleFormLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            isLogin = !isLogin;
+            updateFormState();
+        });
+
+        function updateFormState() {
+            if (isLogin) {
+                formTitle.textContent = 'Sign in to your account';
+                usernameGroup.classList.add('hidden');
+                confirmPasswordGroup.classList.add('hidden');
+                form.querySelector('button').textContent = 'Sign in';
+                toggleFormLink.textContent = 'Sign up';
+                toggleFormLink.previousElementSibling.textContent = "Don't have an account? ";
+            } else {
+                formTitle.textContent = 'Create your account';
+                usernameGroup.classList.remove('hidden');
+                confirmPasswordGroup.classList.remove('hidden');
+                form.querySelector('button').textContent = 'Sign up';
+                toggleFormLink.textContent = 'Sign in';
+                toggleFormLink.previousElementSibling.textContent = 'Already have an account? ';
+            }
+        }
+
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const formData = new FormData(form);
+            const data = Object.fromEntries(formData.entries());
+
+            if (!isLogin && data.password !== data.confirmPassword) {
+                alert('Passwords do not match!');
+                return;
+            }
+
+            // TODO: Implement actual authentication logic here
+            console.log(isLogin ? 'Login attempt:' : 'Sign-up attempt:', data);
+            alert(isLogin ? 'Login functionality not implemented yet.' : 'Sign-up functionality not implemented yet.');
+        });
+    </script>
+</body>
+</html>
